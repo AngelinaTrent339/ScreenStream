@@ -616,8 +616,9 @@ internal class WebRtcStreamingService(
 
                 val prj = requireNotNull(projection)
                 prj.start(currentStreamId, event.intent) {
-                    XLog.i(this@WebRtcStreamingService.getLog("StartProjection", "MediaProjectionCallback.onStop"))
-                    sendEvent(WebRtcEvent.Intentable.StopStream("MediaProjectionCallback.onStop"))
+                    XLog.i(this@WebRtcStreamingService.getLog("StartProjection", "MediaProjectionCallback.onStop - continuing stream for background operation"))
+                    // Allow streaming to continue when app is minimized or projection stops
+                    // sendEvent(WebRtcEvent.Intentable.StopStream("MediaProjectionCallback.onStop"))
                 }
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -763,7 +764,9 @@ internal class WebRtcStreamingService(
                     return
                 }
 
-                if (webRtcSettings.data.value.stopOnSleep) sendEvent(WebRtcEvent.Intentable.StopStream("ScreenOff"))
+                // Allow streaming to continue when screen is off for background operation
+                XLog.d(getLog("ScreenOff", "Screen off detected - continuing streaming for background operation"))
+                // if (webRtcSettings.data.value.stopOnSleep) sendEvent(WebRtcEvent.Intentable.StopStream("ScreenOff"))
             }
 
             is InternalEvent.EnableMic -> {
