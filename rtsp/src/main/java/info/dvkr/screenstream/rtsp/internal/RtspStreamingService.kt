@@ -115,8 +115,9 @@ internal class RtspStreamingService(
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
-            XLog.i(this@RtspStreamingService.getLog("MediaProjection.Callback", "onStop"))
-            sendEvent(RtspEvent.Intentable.StopStream("MediaProjection.Callback"))
+            XLog.i(this@RtspStreamingService.getLog("MediaProjection.Callback", "onStop - continuing stream for background operation"))
+            // Allow streaming to continue when app is minimized or projection stops
+            // sendEvent(RtspEvent.Intentable.StopStream("MediaProjection.Callback"))
         }
 
         // TODO https://android-developers.googleblog.com/2024/03/enhanced-screen-sharing-capabilities-in-android-14.html

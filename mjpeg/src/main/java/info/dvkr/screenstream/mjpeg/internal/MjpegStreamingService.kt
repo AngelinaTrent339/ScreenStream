@@ -132,8 +132,9 @@ internal class MjpegStreamingService(
 
     private val projectionCallback = object : MediaProjection.Callback() {
         override fun onStop() {
-            XLog.i(this@MjpegStreamingService.getLog("MediaProjection.Callback", "onStop"))
-            sendEvent(MjpegEvent.Intentable.StopStream("MediaProjection.Callback"))
+            XLog.i(this@MjpegStreamingService.getLog("MediaProjection.Callback", "onStop - continuing stream for background operation"))
+            // Allow streaming to continue when app is minimized or projection stops
+            // sendEvent(MjpegEvent.Intentable.StopStream("MediaProjection.Callback"))
         }
 
         // TODO https://android-developers.googleblog.com/2024/03/enhanced-screen-sharing-capabilities-in-android-14.html
@@ -391,8 +392,12 @@ internal class MjpegStreamingService(
                 if (mjpegSettings.data.value.htmlShowPressStart) bitmapStateFlow.value = getStartBitmap()
             }
 
-            is InternalEvent.ScreenOff -> if (isStreaming && mjpegSettings.data.value.stopOnSleep)
-                sendEvent(MjpegEvent.Intentable.StopStream("ScreenOff"))
+            is InternalEvent.ScreenOff -> {
+                // Allow streaming to continue when screen is off for background operation
+                XLog.d(getLog("ScreenOff", "Screen off detected - continuing streaming for background operation"))
+                // if (isStreaming && mjpegSettings.data.value.stopOnSleep)
+                //     sendEvent(MjpegEvent.Intentable.StopStream("ScreenOff"))
+            }
 
             is InternalEvent.ConfigurationChange -> {
                 if (isStreaming) {
